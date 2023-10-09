@@ -1,0 +1,16 @@
+{
+  "name": "mi-proyecto",
+  "version": "1.0.0",
+  "description": "Descripción de mi proyecto",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["node", "express", "phaser"],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "phaser": "^3.55.2"
+  }
+}
