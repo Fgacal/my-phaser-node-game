@@ -12,7 +12,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Define una ruta estática para servir archivos estáticos (como el juego Phaser)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './public')));
 
 // Ruta principal que sirve tu juego (ajusta la ruta y el nombre de archivo según tu proyecto)
 app.get('/', (req, res) => {

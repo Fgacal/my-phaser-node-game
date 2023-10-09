@@ -6,11 +6,16 @@
   "scripts": {
     "start": "node index.js"
   },
-  "keywords": ["node", "express", "phaser"],
-  "author": "Tu Nombre",
+  "keywords": [
+    "node",
+    "express",
+    "phaser"
+  ],
+  "author": "Felix Galvan",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "phaser": "^3.55.2"
+    "phaser": "^3.60.0",
+    "socket.io": "^x.x.x"
   }
 }
