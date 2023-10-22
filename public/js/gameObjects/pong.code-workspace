@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "..\\..\\..\\animaciones_altlas"
+		},
+		{
+			"path": "..\\.."
+		},
+		{
+			"path": "..\\..\\..\\phaser_CONTROLES Y AGREGAR IMAGEN Y ALGUNAS FUNCIONES"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "1º- Proyect -PONG"
+	}
+}
