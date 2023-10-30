@@ -1,6 +1,6 @@
-class MenuScene extends Phaser.Scene {
+class MenuOnlineScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'MenuScene' });
+        super({ key: 'MenuOnlineScene' });
     }
     create() {
         this.audio = this.sound.add("inicio", { loop: true });
@@ -11,13 +11,13 @@ class MenuScene extends Phaser.Scene {
         let graphics = this.add.graphics();
         graphics.fillStyle(0xFAD7A0, 1)
         graphics.fillRect(0, 0, this.sys.game.config.width, this.sys.game.config.height)
-        this.titleText = this.add.text(center_width, this.sys.game.config.height / 4, "PONG", {
-            color: "#E74C3C",
+        this.titleText = this.add.text(center_width, this.sys.game.config.height / 4, "Multiplayer Online Menu", {
+            color: "#85C1E9",
             fontFamily: "bunge",
-            fontSize: 80
+            fontSize: 40
         }).setShadow(2, 2, 'rgba(0,0,0,1)', 0);
         this.titleText.setOrigin(0.5);
-        const transtion = () => {
+      /*   const transtion = () => {
             let tween = this.tweens.add({
                 targets: this.titleText,
 
@@ -54,11 +54,12 @@ class MenuScene extends Phaser.Scene {
         transtion();
         setInterval(() => {
             transtion();
-        }, 13000);
+        }, 13000); */
         // Agrega botones para diferentes opciones
-        this.createMenuButton(center_height, 'Jugar', 'PlayScene');
-        this.createMenuButton(center_height + 40, 'Multijugador Local', 'PlayScene');
-        this.createMenuButton(center_height + 80, 'Multijugador en Línea', 'MenuOnlineScene');
+        this.createMenuButton(center_height,'Buscar partida', 'JoinRoomScene');
+        this.createMenuButton(center_height + 40, 'Crear Partida', 'CreateRoomScene');
+        this.createMenuButton(center_height + 80, 'Volver', 'MenuScene');
+        this.createMenuButton(center_height + 120, 'Test', 'OnlineMultiplayerScene');
     }
 
     createMenuButton(y, text, sceneKey) {
@@ -73,7 +74,7 @@ class MenuScene extends Phaser.Scene {
         // Cambia el color al pasar el puntero sobre el botón
         button.on('pointerover', () => {
             this.a.play();
-            button.setColor('#E74C3C');
+            button.setColor('#85C1E9');
         });
 
         // Restaura el color original cuando el puntero sale del botón
@@ -92,4 +93,4 @@ class MenuScene extends Phaser.Scene {
     }
 }
 
-export default MenuScene;
+export default MenuOnlineScene;

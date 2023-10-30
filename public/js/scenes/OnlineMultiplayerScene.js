@@ -7,7 +7,7 @@ class OnlineMultiplayerScene extends Phaser.Scene {
         this.socket = io();
         this.localPlayerColor = '';  // Color del jugador local
         this.players = {};  // Objeto para mantener la información de los jugadores
-        this.localPlayer = null; 
+        this.localPlayer = null;
         this.gameStarted = false;  // Indicador de si la partida ha comenzado
     }
 
@@ -41,8 +41,8 @@ class OnlineMultiplayerScene extends Phaser.Scene {
                 this.disconnectedPlayerText.setVisible(false);
             }
             this.createBall(ball);  // Llama a una función para crear la bola
-            this.physics.add.collider(this.bola,this.localPlayer, this.chocapala, null, this);
-            this.physics.add.collider(this.bola,this.players[Object.keys(this.players)[0]], this.chocapala, null, this);
+            this.physics.add.collider(this.bola, this.localPlayer, this.chocapala, null, this);
+            this.physics.add.collider(this.bola, this.players[Object.keys(this.players)[0]], this.chocapala, null, this);
             this.physics.add.collider(this.bola, this.top);
             this.physics.add.collider(this.bola, this.bot);
             this.physics.add.collider(this.bola, this.p1, this.chocapared, null, this);
@@ -68,22 +68,23 @@ class OnlineMultiplayerScene extends Phaser.Scene {
         });
 
         this.socket.on('player-info', (player) => {
-            this.createPlayer(this, player);
+            /*    this.createPlayer(this, player); */
             /*    this.physics.world.collide(this.players[this.socket.id], [this.p1, this.p2, this.p3, this.p4, this.p5], this.choca, null, this); */
         });
 
         this.socket.on('all-players', (allPlayers) => {
             for (const playerInfo of allPlayers) {
-                if (this.players && !this.players[playerInfo.id] &&  playerInfo.id != this.socket.id) {
+                if (this.players && !this.players[playerInfo.id] && playerInfo.id != this.socket.id) {
                     // Crear un nuevo jugador si no existe
                     this.createPlayer(this, playerInfo);
                 } else {
+                    this.createPlayer(this, playerInfo);
                     // Actualizar la información de jugadores existentes
-                  /*   this.players[playerInfo.id].color = playerInfo.color; */
+                    /*   this.players[playerInfo.id].color = playerInfo.color; */
                 }
             }
         });
-        
+
 
         // Escucha las actualizaciones de otros jugadores y actualiza sus posiciones.
         this.socket.on('player-updated', (playerData) => {
@@ -124,13 +125,22 @@ class OnlineMultiplayerScene extends Phaser.Scene {
         this.p6 = this.physics.add.staticImage(751, 364, "p6").setScale(1.3);
 
         this.add.image(center_width, center_height, "campo3")
-
-
+        this.socket.on('actualizar-marcador', (player) => {
+            if (player.player == 2 && player.color == 'red') {
+                this.marcador1.text = player.score.toString();
+            }
+            else if (player.player == 1 && player.color == 'blue') {
+                this.marcador2.text = player.score.toString();
+            }
+            this.punto.play();
+            this.empezar();
+        });
 
     }
 
 
     empezar() {
+        this.bola.setPosition(400, 200);
         let anguloInicial = Math.PI / 4 - Math.random() * Math.PI / 2;
         const derechaOIzq = Math.floor(Math.random() * 2);
         console.log(anguloInicial);
@@ -142,58 +152,36 @@ class OnlineMultiplayerScene extends Phaser.Scene {
     }
 
     pintarMarcador() {
-        this.marcador1 = this.add.text(350, 75, '0', { fontFamily: 'Arial', fontSize: 80, color: '#f00', align: 'right' }).setOrigin(1, 0).setShadow(2, 2, 'rgba(0,0,0,1)', 0);;
-        this.marcador2 = this.add.text(450, 75, '0', { fontFamily: 'Arial', fontSize: 80, color: '#3498DB', }).setShadow(2, 2, 'rgba(0,0,0,1)', 0);
-        this.marcador1.visible = false;
-        this.marcador2.visible = false;
+        this.marcador1 = this.add.text(50, 10, '0', { fontFamily: 'Arial', fontSize: 30, color: '#f00', align: 'right' }).setOrigin(1, 0).setShadow(2, 2, 'rgba(0,0,0,1)', 0);;
+        this.marcador2 = this.add.text(750, 10, '0', { fontFamily: 'Arial', fontSize: 30, color: '#3498DB', }).setShadow(2, 2, 'rgba(0,0,0,1)', 0);
 
     }
 
 
     update(time, delta) {
+        this.bola.rotation += 0.1;
+        
         if (this.gameStarted && this.bola) {
             // Comprueba si la posición de la bola ha cambiado significativamente
             if (this.bola.oldX !== this.bola.x || this.bola.oldY !== this.bola.y) {
-                this.sendBallPosition();
+                this.socket.emit('ball-moved', { x: this.bola.x, y: this.bola.y });
                 this.bola.oldX = this.bola.x;
                 this.bola.oldY = this.bola.y;
             }
         }
 
-        
-        
-        this.bola.rotation += 0.1;
-        if (this.bola.x < 0) {
-    
-            console.log(this.velocidad)
-            this.punto.play();
-            this.bola.setPosition(400, 200);
-            this.empezar();
 
-            this.marcador1.visible = true;
-            this.marcador2.visible = true;
-            setTimeout(() => {
-                this.marcador1.visible = false;
-                this.marcador2.visible = false;
-            }, 3500);
-
-            this.marcador2.text = parseInt(this.marcador2.text) + 1;
+        // Cuando el jugador anota un punto
+        if (this.bola.x < 0) { 
+            if(this.localPlayer.color == 'blue' && this.localPlayer.player == 1){
+              this.point()
+            }
         } else if (this.bola.x > this.sys.game.config.width) {
-            console.log(this.velocidad)
-            this.punto.play();
-            this.bola.setPosition(400, 200);
-            this.empezar()
-
-            this.marcador1.visible = true;
-            this.marcador2.visible = true;
-            setTimeout(() => {
-                this.marcador1.visible = false;
-                this.marcador2.visible = false;
-            }, 3600);
-
-            this.marcador1.text = parseInt(this.marcador1.text) + 1;
-
+            if(this.localPlayer.color == 'red' && this.localPlayer.player == 2){
+                this.point()
+            }
         }
+
 
 
         if (this.localPlayerColor === 'red') {
@@ -244,20 +232,29 @@ class OnlineMultiplayerScene extends Phaser.Scene {
                 this.localPlayer = new palas(scene, scene.sys.game.config.width - 130, scene.sys.game.config.height / 2, 'derecha').setScale(0.7);
             }
             // Configurar los controles del jugador local
-            this.setupLocalPlayerControls(this.localPlayer);
+            /* this.setupLocalPlayerControls(this.localPlayer); */
+            this.localPlayer.id = playerInfo.id
+            this.localPlayer.color = playerInfo.color
+            this.localPlayer.score = playerInfo.score
+            this.localPlayer.player = playerInfo.player
+            this.localPlayer.room = playerInfo.room
         } else {
             // Este jugador es en línea
             let player;
             if (color === 'red') {
                 // Crea al jugador rojo
-                player =  new palas(scene, 130, scene.sys.game.config.height / 2, 'izquierda').setScale(0.7);
+                player = new palas(scene, 130, scene.sys.game.config.height / 2, 'izquierda').setScale(0.7);
             } else if (color === 'blue') {
                 // Crea al jugador azul
                 player = new palas(scene, scene.sys.game.config.width - 130, scene.sys.game.config.height / 2, 'derecha').setScale(0.7);
             }
-            // Agrega al jugador en línea al objeto de jugadores
-            this.players[id] = player;
+            player.id = playerInfo.id
+            player.color = playerInfo.color
+            player.score = playerInfo.score
+            player.player = playerInfo.player
+            player.room = playerInfo.room
 
+            this.players[id] = player;
         }
     }
 
@@ -279,11 +276,10 @@ class OnlineMultiplayerScene extends Phaser.Scene {
             this.bola.setBounce(1);
             this.velocidad = 400;
             this.empezar();
-            // Asegúrate de enviar la posición inicial de la bola al servidor
-            this.sendBallPosition();
-        } 
+
+        }
     }
-    
+
 
 
     setupLocalPlayerControls(player) {
@@ -316,10 +312,11 @@ class OnlineMultiplayerScene extends Phaser.Scene {
             this.bola.y = ballPosition.y;
         }
     }
-    sendBallPosition() {
-        if (this.bola) {
-            const ballPosition = { x: this.bola.x, y: this.bola.y };
-            this.socket.emit('ball-moved', ballPosition);
+    point(){
+            let flag = true;
+        if (flag){
+            this.socket.emit('anotar-punto', { player: this.localPlayer.player });
+            flag = false
         }
     }
 
