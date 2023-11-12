@@ -4,6 +4,8 @@ class JoinRoomScene extends Phaser.Scene {
         this.socket = io();
     }
     create() {
+
+   
         // Emite el evento para obtener las salas activas
         this.socket.emit('get-active-rooms');
 
@@ -28,14 +30,24 @@ class JoinRoomScene extends Phaser.Scene {
             if(activeRooms.length > 0){
                 let count = 0;
                 activeRooms.forEach((room) => {
-                    count += 10;
-                    this.createMenuButton(center_height + count, `${room.roomName} ${room.numPlayers}/2`, 'OnlineMultiplayerScene', room);
+                    count += 25;
+                    this.createMenuButton(center_height + count, `${room.roomName} ${room.numPlayers}/2`, 'CreateRoomScene', room);
                 });
             }
             else{
                 this.createMenuButton(center_height , `No hay partidas en este momento ..`, false);
             }
         });
+        this.socket.on('roomError',(error)=>{
+            this.errorText = this.add.text(center_width, this.sys.game.config.height / 5, error, {
+                color: "#FF5100",
+                fontFamily: "console",
+                fontSize: 30
+            }).setShadow(2, 2, 'rgba(0,0,0,1)', 0);
+            setTimeout(() => {
+                this.errorText.destroy()
+            }, 3000);
+        })
     }
 
     createMenuButton(y, text, sceneKey, roomInfo = null) {
@@ -62,7 +74,8 @@ class JoinRoomScene extends Phaser.Scene {
         if(sceneKey){
             button.on('pointerdown', () => {
                 this.audio.stop();
-                this.scene.start(sceneKey, roomInfo);
+                roomInfo.joinPlayer = true;
+                this.scene.start('CreateRoomScene', roomInfo);  
             });
         }
     }

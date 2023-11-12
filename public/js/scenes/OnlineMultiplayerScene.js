@@ -16,7 +16,7 @@ class OnlineMultiplayerScene extends Phaser.Scene {
         let center_width = this.sys.game.config.width / 2;
         let center_height = this.sys.game.config.height / 2;
 
-        this.socket.emit('player-joined');
+    /*     this.socket.emit('player-joined'); */
 
 
         this.waitingText = this.add.text(center_width, this.sys.game.config.height / 4, 'esperando jugadores ....', {

@@ -85,7 +85,9 @@ class MenuOnlineScene extends Phaser.Scene {
         // Inicia la escena correspondiente al hacer clic en el botón
         button.on('pointerdown', () => {
             const params = {
-                localMultiplayer: (text == 'Multijugador Local') ? true : false
+                localMultiplayer: (text == 'Multijugador Local') ? true : false,
+                hostPlayer : (sceneKey == 'CreateRoomScene') ? true : false,
+                joinPlayer : (sceneKey == 'JoinRoomScene') ? true : false
             }
             this.audio.stop();
             this.scene.start(sceneKey, params);

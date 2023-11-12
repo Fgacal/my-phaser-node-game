@@ -6,7 +6,7 @@ import PauseScene from './scenes/PauseScene.js'
 import OnlineMultiplayerScene from './scenes/OnlineMultiplayerScene.js'
 import MenuOnlineScene from './scenes/MenuOnlineScene.js'
 import JoinRoomScene from './scenes/JoinRoomScene.js'
-/* import CreateRoomScene from './scenes/CreateRoomScene.js' */
+import CreateRoomScene from './scenes/CreateRoomScene.js'
 
 const config = {
     type: Phaser.AUTO,
@@ -35,7 +35,7 @@ const config = {
         OnlineMultiplayerScene,
         MenuOnlineScene,
         JoinRoomScene,
-  /*       CreateRoomScene */
+        CreateRoomScene
     ],
     fps: 60
 }
